@@ -1,0 +1,63 @@
+/* Soft, elegant UI with a modern minimal theme */
+.medicine-container {
+    background: #EAE7DC; /* Light pastel background */
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 500px;
+    margin: 50px auto;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+    border: #E85A4F 3px solid;
+  }
+  
+  .medicine-title {
+    color: #E85A4F; /* Bold coral-red accent */
+    font-size: 24px;
+    margin-bottom: 1rem;
+  }
+  
+  .medicine-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .medicine-form input {
+    padding: 15px;
+    border: 1px solid #D8C3A5;
+    border-radius: 8px;
+    font-size: 16px;
+    background: #fff;
+    color: #8E8D8A;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .medicine-form input:focus {
+    border-color: #E98074;
+    outline: none;
+    box-shadow: 0px 0px 8px rgba(233, 128, 116, 0.4);
+  }
+  
+  .submit-btn {
+    background: #E98074;
+    color: white;
+    font-size: 18px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .submit-btn:hover {
+    background: #E85A4F;
+  }
+  
+  @media (max-width: 600px) {
+    .medicine-container {
+      width: 90%;
+      padding: 1.5rem;
+    }
+  }
+  

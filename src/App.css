@@ -1,0 +1,96 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Body Styling */
+body {
+  background-color: #EAE7DC;
+  color: black;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Navigation Bar */
+nav {
+  display: flex;
+  justify-content: center;
+  background-color: rgba(232, 224, 220, 0.8);
+  padding: 15px 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  border: #E85A4F 3px solid;
+}
+
+/* Navigation Menu */
+ul {
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  list-style: none;
+}
+
+li {
+  display: inline;
+}
+
+a {
+  text-decoration: none;
+  color: #E98074;
+  font-size: 20px;
+  font-weight: bold;
+  padding: 10px 15px;
+  transition: all 0.3s ease;
+  border-radius: 5px;
+}
+
+a:hover {
+  background-color: #E85A4F;
+  color: #EAE7DC;
+}
+
+/* Responsive Navigation */
+@media (max-width: 768px) {
+  nav {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  ul {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  a {
+    font-size: 18px;
+    padding: 8px 12px;
+  }
+}
+
+/* Heading */
+h1 {
+  font-size: 50px;
+  color: #E85A4F;
+  font-weight: bold;
+  margin-top: 40px;
+  line-height: 1.2;
+}
+
+/* Button */
+button {
+  background-color: #E85A4F;
+  color: white;
+  padding: 10px 15px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background-color: #E98074;
+}
