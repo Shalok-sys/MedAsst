@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import MedicineInputPage from './MedicineInputPage';
 import MedicineStockPage from './MedicineStockPage';
 import Login from './Login';
+import Home from './Home';
 import './App.css';
 import { auth } from './firebaseConfig';
 
@@ -24,6 +25,7 @@ const App = () => {
         <h1>Medicine Stock Monitor</h1>
 
         <Routes>
+          <Route path="/" element={<Home />} />
           <Route path="/add-medicine" element={<MedicineInputPage />} />
           <Route path="/view-stock" element={<MedicineStockPage />} />
         </Routes>
