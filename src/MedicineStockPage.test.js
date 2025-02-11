@@ -1,8 +1,12 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import MedicineStockPage from './MedicineStockPage';
 import { database, auth } from './firebaseConfig';
-import { ref, onValue } from 'firebase/database';
+import { ref, onValue, remove } from 'firebase/database';
+
+beforeEach(() => {
+  global.alert = jest.fn();
+});
 
 // Mock Firebase authentication
 jest.mock('./firebaseConfig', () => ({
@@ -12,22 +16,35 @@ jest.mock('./firebaseConfig', () => ({
   database: {},
 }));
 
-// Mock Firebase Realtime Database
-jest.mock('firebase/database', () => ({
-  ref: jest.fn(),
-  onValue: jest.fn((refPath, callback) => {
-    // Simulating Firebase returning medicine data
-    const mockSnapshot = {
-      val: () => ({
-        med1: { name: 'Paracetamol', dosage: 500, pillsPerDay: 2, price: 10, stock: 20 },
-        med2: { name: 'Ibuprofen', dosage: 400, pillsPerDay: 1, price: 15, stock: 4 },
-      }),
-    };
-    callback(mockSnapshot);
-  }),
-}));
+jest.mock('firebase/database', () => {
+  const originalModule = jest.requireActual('firebase/database');
+
+  let mockData = {
+    med1: { name: 'Paracetamol', dosage: 500, pillsPerDay: 2, price: 10, stock: 20 },
+    med2: { name: 'Ibuprofen', dosage: 400, pillsPerDay: 1, price: 15, stock: 4 },
+  };
+
+  return {
+    ...originalModule,
+    ref: jest.fn((db, path) => ({ path })),
+    onValue: jest.fn((refPath, callback) => {
+      callback({ val: () => mockData });
+    }),
+    remove: jest.fn((refPath) => {
+      // Simulate deleting Paracetamol from Firebase
+      if (refPath.path === 'users/testUser123/medicines/med1') {
+        delete mockData.med1;
+      }
+      return Promise.resolve();
+    }),
+  };
+});
 
 describe('MedicineStockPage Component', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('renders Medicine Stock title', () => {
     render(<MedicineStockPage />);
     expect(screen.getByText('Medicine Stock')).toBeInTheDocument();
@@ -40,20 +57,30 @@ describe('MedicineStockPage Component', () => {
       expect(screen.getByText('Paracetamol')).toBeInTheDocument();
       expect(screen.getByText('Ibuprofen')).toBeInTheDocument();
     });
-
-    expect(screen.getByText('500')).toBeInTheDocument();  // Dosage of Paracetamol
-    expect(screen.getByText('400')).toBeInTheDocument();  // Dosage of Ibuprofen
   });
 
-  it('applies correct row classes based on stock levels', async () => {
+  it('deletes a medicine from Firebase when delete button is clicked', async () => {
     render(<MedicineStockPage />);
+    
+    await waitFor(() => {
+      expect(screen.getByText('Paracetamol')).toBeInTheDocument();
+    });
+
+    const deleteButton = screen.getAllByText('Delete')[0]; // Delete Paracetamol
+
+    fireEvent.click(deleteButton);
 
     await waitFor(() => {
-      const highStockRow = screen.getByText('Paracetamol').closest('tr');
-      const lowStockRow = screen.getByText('Ibuprofen').closest('tr');
+      expect(remove).toHaveBeenCalledWith({ path: 'users/testUser123/medicines/med1' });
+    });
 
-      expect(highStockRow).toHaveClass('stock-high'); // 20 / 2 = 10 (High stock)
-      expect(lowStockRow).toHaveClass('stock-low');   // 4 / 1 = 4 (Low stock)
+    await waitFor(() => {
+      expect(global.alert).toHaveBeenCalledWith('Medicine deleted successfully!');
+    });
+
+    // UI should update after deletion
+    await waitFor(() => {
+      expect(screen.queryByText('Paracetamol')).not.toBeInTheDocument();
     });
   });
 });

@@ -20,7 +20,9 @@ const MedicineInputPage = () => {
     e.preventDefault();
     if (auth.currentUser) {
       const userId = auth.currentUser.uid;
-      push(ref(database, `users/${userId}/medicines`), medicine); // Store under user UID
+      const currentDate = new Date().toISOString(); // Get the current date and time in ISO format
+      const medicineWithDate = { ...medicine, createdAt: currentDate }; // Add the creation date to the medicine object
+      push(ref(database, `users/${userId}/medicines`), medicineWithDate); // Store under user UID
       setMedicine({ name: '', dosage: '', pillsPerDay: '', price: '', stock: '' });
       alert('Medicine added successfully!');
     } else {

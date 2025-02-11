@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { database, auth } from './firebaseConfig';
-import { ref, onValue } from "firebase/database";
+import { ref, onValue, remove } from "firebase/database";
 import './MedicineStockPage.css';
 
 const MedicineStockPage = () => {
@@ -13,7 +13,16 @@ const MedicineStockPage = () => {
       onValue(medicinesRef, (snapshot) => {
         const data = snapshot.val();
         if (data) {
-          setMedicines(Object.values(data));
+          const updatedMedicines = Object.keys(data).map(key => {
+            const medicine = data[key];
+            const daysPassed = calculateDaysPassed(medicine.createdAt);
+            let updatedStock = medicine.stock - (daysPassed * medicine.pillsPerDay);
+            if (isNaN(updatedStock) || updatedStock < 0) {
+              updatedStock = 0;
+            }
+            return { ...medicine, id: key, stock: updatedStock };
+          });
+          setMedicines(updatedMedicines);
         } else {
           setMedicines([]);
         }
@@ -21,9 +30,33 @@ const MedicineStockPage = () => {
     }
   }, [auth.currentUser]);
 
+  const calculateDaysPassed = (createdAt) => {
+    if (!createdAt) return 0;
+    const currentDate = new Date();
+    const creationDate = new Date(createdAt);
+    const timeDifference = currentDate - creationDate;
+    const daysPassed = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+    return daysPassed;
+  };
+
+  const handleDelete = (id) => {
+    const userId = auth.currentUser.uid;
+    const medicineRef = ref(database, `users/${userId}/medicines/${id}`);
+    
+    remove(medicineRef)
+      .then(() => {
+        setMedicines((prevMedicines) => prevMedicines.filter(med => med.id !== id));
+        alert('Medicine deleted successfully!');
+      })
+      .catch((error) => {
+        console.error('Error deleting medicine: ', error);
+      });
+  };
+  
+
   const getRowClass = (stock, pillsPerDay) => {
-    if (stock/ pillsPerDay >= 5) return 'stock-high';
-    if (stock / pillsPerDay >= 2 && stock / pillsPerDay <=4) return 'stock-low';
+    if (stock / pillsPerDay >= 5) return 'stock-high';
+    if (stock / pillsPerDay >= 2 && stock / pillsPerDay <= 4) return 'stock-low';
     return 'stock-out';
   };
 
@@ -39,6 +72,7 @@ const MedicineStockPage = () => {
               <th>Pills per Day</th>
               <th>Price (Rs)</th>
               <th>Stock</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -49,6 +83,9 @@ const MedicineStockPage = () => {
                 <td>{medicine.pillsPerDay}</td>
                 <td>{medicine.price}</td>
                 <td>{medicine.stock}</td>
+                <td>
+                  <button onClick={() => handleDelete(medicine.id)}>Delete</button>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -57,4 +94,5 @@ const MedicineStockPage = () => {
     </div>
   );
 };
+
 export default MedicineStockPage;
