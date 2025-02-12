@@ -9,11 +9,17 @@ const Login = ({ setUser }) => {
     setUser(result.user); // Store user info in state
   };
 
-  const handleLogout = () => {
-    signOut(auth);
-    setUser(null);
-    alert('Logout successful!');
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      setUser(null);
+      alert('Logout successful!');
+    } catch (error) {
+      console.error('Error during logout:', error);
+      alert('Logout failed! Please try again.');
+    }
   };
+  
 
   return (
     <div className="login-container">
