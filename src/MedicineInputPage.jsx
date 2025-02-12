@@ -18,11 +18,20 @@ const MedicineInputPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Check if any field in the medicine object is empty
+    if (!medicine.name || !medicine.dosage || !medicine.pillsPerDay || !medicine.price || !medicine.stock) {
+      alert('Please fill in all fields before adding the medicine.');
+      return;
+    }
+  
     if (auth.currentUser) {
       const userId = auth.currentUser.uid;
       const currentDate = new Date().toISOString(); // Get the current date and time in ISO format
       const medicineWithDate = { ...medicine, createdAt: currentDate }; // Add the creation date to the medicine object
+      
       push(ref(database, `users/${userId}/medicines`), medicineWithDate); // Store under user UID
+      
       setMedicine({ name: '', dosage: '', pillsPerDay: '', price: '', stock: '' });
       alert('Medicine added successfully!');
     } else {
@@ -30,6 +39,7 @@ const MedicineInputPage = () => {
       setMedicine({ name: '', dosage: '', pillsPerDay: '', price: '', stock: '' });
     }
   };
+  
 
   return (
     <div className="medicine-container">

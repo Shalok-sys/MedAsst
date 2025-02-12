@@ -18,7 +18,7 @@ const App = () => {
             <li><Link to="/add-medicine">Add Medicine</Link></li>
             <li><Link to="/view-stock">View Stock</Link></li>
             <li><Login setUser={setUser} /> </li>
-            <li>{auth.currentUser ? (<p>Hello! {auth.currentUser.displayName}</p>): (<h3>Unsaved Data</h3>)}</li>
+            <li>{auth.currentUser ? (<h3>Hello! {auth.currentUser.displayName}</h3>): (<h3>Unsaved Data</h3>)}</li>
           </ul>
         </nav>
 
