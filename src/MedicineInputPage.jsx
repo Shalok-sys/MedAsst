@@ -50,7 +50,7 @@ const MedicineInputPage = () => {
         <input type="number" name="pillsPerDay" value={medicine.pillsPerDay} onChange={handleChange} placeholder="Pills per Day" />
         <input type="number" name="price" value={medicine.price} onChange={handleChange} placeholder="Price ($)" />
         <input type="number" name="stock" value={medicine.stock} onChange={handleChange} placeholder="Stock Quantity" />
-        <button type="submit" className="submit-btn">Add Medicine</button>
+        <button type="submit" className="submit-btn">Save Medicine</button>
       </form>
     </div>
   );

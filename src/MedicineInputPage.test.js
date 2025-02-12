@@ -25,13 +25,12 @@ describe('MedicineInputPage Component', () => {
 
   test('renders the form correctly', () => {
     render(<MedicineInputPage />);
-
     expect(screen.getByPlaceholderText('Medicine Name')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Dosage per Pill (mg)')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Pills per Day')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Price ($)')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Stock Quantity')).toBeInTheDocument();
-    expect(screen.getByText('Add Medicine')).toBeInTheDocument();
+    expect(screen.getByText('Save Medicine')).toBeInTheDocument();
   });
 
   test('updates input values correctly', () => {
@@ -52,7 +51,7 @@ describe('MedicineInputPage Component', () => {
     fireEvent.change(screen.getByPlaceholderText('Price ($)'), { target: { value: '10' } });
     fireEvent.change(screen.getByPlaceholderText('Stock Quantity'), { target: { value: '20' } });
 
-    fireEvent.click(screen.getByText('Add Medicine'));
+    fireEvent.click(screen.getByText('Save Medicine'));
 
     expect(ref).toHaveBeenCalledWith(expect.anything(), 'users/testUser123/medicines'); // Ensure correct path
     expect(push).toHaveBeenCalledWith(
@@ -69,13 +68,28 @@ describe('MedicineInputPage Component', () => {
     expect(screen.getByPlaceholderText('Medicine Name').value).toBe('');
   });
 
-  test('shows alert if user is not logged in', () => {
+  test('shows alert if user enters empty details', () => {
     auth.currentUser = null;
 
     global.alert = jest.fn(); // Mock alert
 
     render(<MedicineInputPage />);
-    fireEvent.click(screen.getByText('Add Medicine'));
+    fireEvent.click(screen.getByText('Save Medicine'));
+
+    expect(global.alert).toHaveBeenCalledWith('Please fill in all fields before adding the medicine.');
+  });
+  test('shows alert if user is not logged in', () => {
+    render(<MedicineInputPage />);
+
+    fireEvent.change(screen.getByPlaceholderText('Medicine Name'), { target: { value: 'Paracetamol' } });
+    fireEvent.change(screen.getByPlaceholderText('Dosage per Pill (mg)'), { target: { value: '500' } });
+    fireEvent.change(screen.getByPlaceholderText('Pills per Day'), { target: { value: '2' } });
+    fireEvent.change(screen.getByPlaceholderText('Price ($)'), { target: { value: '10' } });
+    fireEvent.change(screen.getByPlaceholderText('Stock Quantity'), { target: { value: '20' } });
+
+    global.alert = jest.fn(); // Mock alert
+
+    fireEvent.click(screen.getByText('Save Medicine'));
 
     expect(global.alert).toHaveBeenCalledWith('Please log in to save medicines.');
   });
