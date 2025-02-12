@@ -6,6 +6,7 @@ import Login from './Login';
 import Home from './Home';
 import './App.css';
 import { auth } from './firebaseConfig';
+import { SpeedInsights } from "@vercel/speed-insights/react"
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -30,6 +31,7 @@ const App = () => {
           <Route path="/view-stock" element={<MedicineStockPage />} />
         </Routes>
         </Router>
+        <SpeedInsights />
       </div>
   );
 };
