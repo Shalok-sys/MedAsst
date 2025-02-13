@@ -7,7 +7,6 @@ const MedicineStockPage = () => {
   const [medicines, setMedicines] = useState([]);
 
   useEffect(() => {
-    if (auth.currentUser) {
       const userId = auth.currentUser.uid;
       const medicinesRef = ref(database, `users/${userId}/medicines`);
       onValue(medicinesRef, (snapshot) => {
@@ -28,7 +27,7 @@ const MedicineStockPage = () => {
         }
       });
     }
-  }, [auth.currentUser]);
+  ), [auth.currentUser];
 
   const calculateDaysPassed = (createdAt) => {
     if (!createdAt) return 0;
@@ -76,7 +75,7 @@ const MedicineStockPage = () => {
             </tr>
           </thead>
           <tbody>
-            {medicines.map((medicine, index) => (
+            {auth.currentUser ? medicines.map((medicine, index) => (
               <tr key={index} className={getRowClass(medicine.stock, medicine.pillsPerDay)}>
                 <td>{medicine.name}</td>
                 <td>{medicine.dosage}</td>
@@ -87,7 +86,7 @@ const MedicineStockPage = () => {
                   <button onClick={() => handleDelete(medicine.id)}>Delete</button>
                 </td>
               </tr>
-            ))}
+            )) : null}
           </tbody>
         </table>
       </div>
