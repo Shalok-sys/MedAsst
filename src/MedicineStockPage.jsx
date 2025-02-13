@@ -7,6 +7,7 @@ const MedicineStockPage = () => {
   const [medicines, setMedicines] = useState([]);
 
   useEffect(() => {
+    if (auth.currentUser) {
       const userId = auth.currentUser.uid;
       const medicinesRef = ref(database, `users/${userId}/medicines`);
       onValue(medicinesRef, (snapshot) => {
@@ -27,7 +28,7 @@ const MedicineStockPage = () => {
         }
       });
     }
-  ), [auth.currentUser];
+  }, [auth.currentUser]);
 
   const calculateDaysPassed = (createdAt) => {
     if (!createdAt) return 0;
